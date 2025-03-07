@@ -26,7 +26,6 @@
     "os": "^0.1.2",
     "rss-parser": "^3.13.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SebastienB13/StudiosDCPJ_Public.git"
