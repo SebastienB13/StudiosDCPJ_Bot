@@ -5,6 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const config = require("./config.json");
 const db = require('./database/database');
+const { initTicketSystem } = require('./events/ticketSystem');
 
 const client = new Client({
   intents: [
@@ -381,5 +382,88 @@ client.on('guildUpdate', (oldGuild, newGuild) => {
     .setTimestamp();
   sendLog(newGuild.client, embedGuildUpdate);
 });
+
+
+// --- AUTOMOD ---s
+// Regex pour détecter un lien HTTP/HTTPS
+const linkRegex = /https?:\/\/\S+/gi;
+
+const allowedRoles = [
+  '542397088546160640',
+  '794988821027618916',
+  '1340399233014038711',
+  '1340399293533655050',
+  '1340399325129474118',
+  '1340399080152629389',
+  '1340399487058968586',
+  '1340399537227038811',
+  '1340399601571594341',
+  '1340399718286626816',
+  '1340400084428259409',
+  '1340400132755296348',
+  '1340400178787520654'
+];
+
+client.on('messageCreate', async (message) => {
+  // Ignorer les messages des bots et ceux en DM
+  if (message.author.bot || !message.guild) return;
+
+  // Si le message contient un lien
+  if (linkRegex.test(message.content)) {
+    // 1. Envoyer le message sous forme d'embed dans le salon ciblé
+    const targetChannel = message.guild.channels.cache.get('1341932436099170355');
+    if (targetChannel) {
+      const embed = new EmbedBuilder()
+        .setColor('Orange')
+        .setTitle('Lien détecté')
+        .setDescription(`Message de ${message.author} (${message.author.tag}) contenant un lien :\n\n${message.content}`)
+        .setTimestamp();
+      try {
+        await targetChannel.send({ embeds: [embed] });
+      } catch (err) {
+        console.error("Erreur lors de l'envoi du message dans le salon cible :", err);
+      }
+    }
+
+    // 2. Ajouter le rôle "prison" à l'utilisateur
+    try {
+      await message.member.roles.add('577187713497956353');
+    } catch (err) {
+      console.error("Erreur lors de l'ajout du rôle :", err);
+    }
+
+    // 3. Retirer la permission d'envoyer des messages dans tous les salons textuels autres que le salon cible,
+    // sauf pour les rôles autorisés
+    message.guild.channels.cache.forEach(async (channel) => {
+      if (
+        channel.id !== '1341932436099170355' && // Salon cible
+        channel.type === ChannelType.GuildText
+      ) {
+        // Vérification si l'utilisateur a un rôle autorisé
+        const hasAllowedRole = message.member.roles.cache.some(role => allowedRoles.includes(role.id));
+        
+        if (!hasAllowedRole) {
+          try {
+            await channel.permissionOverwrites.edit(message.member, {
+              SEND_MESSAGES: false
+            });
+          } catch (err) {
+            console.error(`Erreur lors de la modification des permissions dans le salon ${channel.id} :`, err);
+          }
+        }
+      }
+    });
+
+    // 4. Supprimer le message original
+    try {
+      await message.delete();
+    } catch (err) {
+      console.error("Erreur lors de la suppression du message original :", err);
+    }
+  }
+});
+
+
+initTicketSystem(client);
 
 client.login(config.token);
