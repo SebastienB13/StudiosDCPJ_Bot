@@ -1,6 +1,6 @@
 node_modules/
 config.json
-database.js
+database/database.js
 file.txt
 
-stats.js
+utility/stats.js
