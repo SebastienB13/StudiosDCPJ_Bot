@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
 const axios = require("axios");
 
-const YOUTUBE_API_KEY = "AIzaSyAUWiNh9iBQCHxjxtNCFwnIaZ2RP37_b9o";
+const YOUTUBE_API_KEY = "AIzaSyCbN6WLN12Z8it4ouJnAa9x_f9AjmrmcDU";
 const CHANNEL_ID = "ID_DE_LA_CHAINE";
 
 module.exports = {
