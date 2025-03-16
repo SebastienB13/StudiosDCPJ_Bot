@@ -6,7 +6,7 @@ const { Server } = require('socket.io');
 const http = require('http');
 
 const app = express();
-const PORT = 5000;  // Port pour l'API du bot
+const PORT = 27397;  // Port pour l'API du bot
 
 const bot = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],

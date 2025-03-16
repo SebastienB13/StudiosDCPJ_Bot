@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = 27397;
+const io = require('socket.io-client');
 
 // Middleware pour parser le JSON
 app.use(express.json());
@@ -16,7 +17,7 @@ app.listen(PORT, () => {
 
 // WEBSOCKET
 
-const socket = io('http://localhost:5000');
+const socket = io('http://localhost:27397');
 
 socket.on('channelUpdate', (data) => {
     console.log('Mise à jour des salons :', data);
