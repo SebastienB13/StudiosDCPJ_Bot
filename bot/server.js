@@ -54,6 +54,6 @@ bot.on('channelDelete', channel => {
     io.emit('channelUpdate', { action: 'delete', id: channel.id });
 });
 
-server.listen(5000, () => {
+server.listen(27397, () => {
     console.log('API du bot avec WebSocket en ligne sur http://localhost:5000');
 });
