@@ -95,6 +95,4 @@ for (const file of logFiles) {
   }
 }
 
-
-
 client.login(config.token);
